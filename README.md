@@ -412,7 +412,7 @@ modal volume get archstyle-xu2014-results-v2 / ./results
 
 - **Original Dataset from Xu 2014 Paper:** [Kaggle](https://www.kaggle.com/datasets/wwymak/architecture-dataset)
 - **Extended Dataset:** [dumitrux/architectural-style-recognition](https://github.com/dumitrux/architectural-style-recognition) — 10,103 images from augmentation (inflates metrics, not used)
-- 
+
 ---
 
 ## 🙏 Acknowledgments
