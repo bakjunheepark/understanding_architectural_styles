@@ -52,7 +52,7 @@ Gradual unfreezing, inspired by ULMFiT [[3]](#references), allows the model to *
 
 ### 2. Foundation Model Scale Enables Small-Data Transfer
 
-The Xu et al. dataset contains only ~5,000 images — tiny by modern standards. Yet we achieve strong results by leveraging **EfficientNetV2-L** (118M parameters pretrained on ImageNet).
+The Xu et al. dataset contains only ~5,000 images, small by modern standards. Yet we achieve strong results by leveraging **EfficientNetV2-L** (118M parameters pretrained on ImageNet).
 
 **Key insight from ablations with InceptionNetv3, ResNet50, EfficientNetV2-S,M,L:** Better foundation models learn richer visual representations that transfer more effectively to specialized domains. Careful fine-tuning can somewhat compensate for limited domain-specific data. EfficientNetV2-L outperformed other models in early ablations.
 
@@ -137,14 +137,14 @@ See `hybrid_buildings/buildings.csv` for the full dataset with scholarly evidenc
 
 1. **The model has learned compositional style features**, not just holistic templates. It can recognize Gothic elements (pointed arches, tracery) even when combined with Art Deco geometry.
 
-2. **88% of buildings have at least one correct style in top-k** — encouraging for potential multi-label applications.
+2. **88% of buildings have at least one correct style in top-k**, encouraging for potential multi-label applications.
 
 3. **32% perfect accuracy on this hard task** suggests room for improvement. Larger datasets with multi-label annotations could push this further.
 
-4. **Style confusions mirror human disagreement**: The model struggles with Colonial/Georgian/Edwardian — the same styles that confuse human experts due to shared Anglo-American design vocabulary.
+4. **Style confusions mirror human disagreement**: The model struggles with Colonial/Georgian/Edwardian, the same styles that confuse human experts due to shared Anglo-American design vocabulary.
 
 ![Per-Building Performance](hybrid_results/building_performance.png)
-*Performance ranking across all 25 hybrid buildings — note the variation in difficulty*
+*Performance ranking across all 25 hybrid buildings*
 
 ### All Buildings: Probability Distributions
 
@@ -170,7 +170,7 @@ Current benchmarks treat style as mutually exclusive categories. But real buildi
 - **Transitional buildings** bridge historical periods
 - **Regional variations** blend global movements with local traditions
 
-A building might be "70% Gothic, 20% Romanesque, 10% Art Nouveau" — but our datasets force binary labels.
+A building might be "70% Gothic, 20% Romanesque, 10% Art Nouveau", but our datasets force binary labels.
 
 ### The Opportunity: Expert-Curated Multi-Label Datasets
 
@@ -291,7 +291,7 @@ Phase 3 (6 ep):  [TRAIN] All layers with discriminative LRs (5e-5 → 5e-4)
 
 | Style | Precision | Recall | F1 | Support | Notes |
 |-------|-----------|--------|-----|---------|-------|
-| **Tudor Revival** | 87.7% | 94.3% | 90.9% | 53 | ✓ Best F1 — distinctive half-timbering |
+| **Tudor Revival** | 87.7% | 94.3% | 90.9% | 53 | ✓ Best F1, distinctive half-timbering |
 | **Ancient Egyptian** | 96.3% | 83.9% | 89.7% | 31 | ✓ Unique iconography |
 | **Novelty** | 100% | 80.6% | 89.3% | 31 | ✓ Perfect precision |
 | **Deconstructivism** | 100% | 79.2% | 88.4% | 24 | ✓ Perfect precision |
@@ -315,14 +315,14 @@ Phase 3 (6 ep):  [TRAIN] All layers with discriminative LRs (5e-5 → 5e-4)
 | **Beaux-Arts** | 52.5% | 67.7% | 59.2% | 31 | ⚠ Confused with Baroque |
 | **Georgian** | 73.0% | 50.9% | 60.0% | 53 | ⚠ Confused with Colonial |
 | **Colonial** | 51.5% | 64.2% | 57.1% | 53 | ⚠ Confused with Georgian |
-| **Edwardian** | 80.0% | 39.0% | 52.5% | 41 | ⚠ Lowest F1 — very low recall |
+| **Edwardian** | 80.0% | 39.0% | 52.5% | 41 | ⚠ Lowest F1, very low recall |
 
 ### Key Observations
 
 **High-performing styles** share distinctive visual signatures:
-- **Perfect precision** (100%): Deconstructivism, Novelty — unmistakable forms
-- **Ancient/Imperial**: Egyptian, Achaemenid — unique iconography and materials
+- **Egyptian, Achaemenid**: unique iconography and materials
 - **Tudor Revival**: Half-timbering is highly distinctive
+- **Deconstructivism, Novelty** have unmistakable forms
 
 **Challenging styles** share design vocabulary with related traditions:
 - **Georgian ↔ Colonial**: Both Anglo-American classical (symmetry, columns)
@@ -330,7 +330,7 @@ Phase 3 (6 ep):  [TRAIN] All layers with discriminative LRs (5e-5 → 5e-4)
 - **Beaux-Arts ↔ Baroque**: Ornate European monumentalism
 - **American Craftsman ↔ Foursquare**: Early 20th-century American vernacular
 
-**The 39% recall on Edwardian** is particularly notable — these buildings are often misclassified as Georgian or Colonial, reflecting genuine ambiguity in British-influenced American architecture.
+**Lowest performance in classifying Edwardian** is particularly notable. These buildings are often misclassified as Georgian or Colonial, reflecting genuine ambiguity in British-influenced American architecture.
 
 ### Confusion Matrix
 
