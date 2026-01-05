@@ -408,11 +408,11 @@ modal volume get archstyle-xu2014-results-v2 / ./results
 - [Report](https://cs230.stanford.edu/projects_winter_2019/reports/15811944.pdf)
 - Contributions: MobileNetV2 achieving ~75%; human expert baseline (56%); object detection for mixed styles
 
-### Related Work
+### Related Kaggle Datasets
 
-- **Extended Dataset:** [dumitrux/architectural-style-recognition](https://github.com/dumitrux/architectural-style-recognition) — 10,103 images with 11x augmentation (inflates metrics)
-- **Original Dataset:** [Kaggle](https://www.kaggle.com/datasets/wwymak/architecture-dataset)
-
+- **Original Dataset from Xu 2014 Paper:** [Kaggle](https://www.kaggle.com/datasets/wwymak/architecture-dataset)
+- **Extended Dataset:** [dumitrux/architectural-style-recognition](https://github.com/dumitrux/architectural-style-recognition) — 10,103 images from augmentation (inflates metrics, not used)
+- 
 ---
 
 ## 🙏 Acknowledgments
