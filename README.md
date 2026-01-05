@@ -23,16 +23,16 @@ This complexity makes architectural style an ideal testbed for understanding wha
 
 | Method | Year | Accuracy | Approach |
 |--------|------|----------|----------|
-| **EfficientNetV2-L (Ours)** | 2026 | **75.6%** | Gradual unfreezing, probability analysis |
+| **EfficientNetV2-L (Ours)** | 2026 | **75.6%** | Fine-tuning with gradual unfreezing |
 | ResNet50 baseline (Ours) | 2026 | 71.3% | Standard 2-stage fine-tuning |
-| MobileNetV2 [[4]](#references) | 2019 | ~75% | Frozen features + FC layers |
+| MobileNetV2 [[4]](#references) | 2019 | ~75% | MobileNetV2 feature extraction + deep learning |
 | DPM-MLLR + Spatial Pyramid [[1]](#references) | 2014 | ~70% | feature engineering + latent variable approach |
 
 ### What the Numbers Miss
 
 Raw accuracy tells only part of the story. Dua et al. [[4]](#references) found that a **trained architect achieved only 56% accuracy** on assigning style in a certain sample, highlighting that this task approaches the limits of human agreement. Many "errors" reflect genuine ambiguity: American Craftsman vs. American Foursquare, or International Style vs. Postmodern.
 
-**Our unique contribution** is not just matching prior accuracy, but demonstrating through our **Hybrid Styles Evaluation** that the model has learned transferable style representations — not just memorized training examples.
+**Our unique contribution** is not just matching prior accuracy, but demonstrating through our **Hybrid Styles Evaluation** that the model has learned transferable style representations, not just memorized training examples.
 
 ---
 
@@ -40,7 +40,7 @@ Raw accuracy tells only part of the story. Dua et al. [[4]](#references) found t
 
 ### 1. Gradual Unfreezing Outperforms Frozen Features
 
-Prior work (Dua et al., 2019) used **frozen pretrained features** with learned classification heads. We show that **gradual unfreezing** — progressively training deeper layers is an effective approach.
+Prior work (Dua et al., 2019) used **frozen pretrained features** with learned classification heads. We show that **gradual unfreezing** or progressively training deeper layers is an effective approach.
 
 | Training Strategy | Accuracy |
 |-------------------|----------|
@@ -48,22 +48,21 @@ Prior work (Dua et al., 2019) used **frozen pretrained features** with learned c
 | Standard 2-stage fine-tuning | 73.5% |
 | Frozen features + FC (Dua et al.) | ~75% |
 
-Gradual unfreezing, inspired by ULMFiT [[3]](#references), allows the model to **adapt pretrained features to domain-specific patterns** (pointed arches, flying buttresses, Doric columns) while preserving general visual understanding.
+Gradual unfreezing, inspired by ULMFiT [[3]](#references), allows the model to **adapt pretrained features to style-specific patterns** (pointed arches, flying buttresses, Doric columns) while preserving general visual understanding.
 
 ### 2. Foundation Model Scale Enables Small-Data Transfer
 
 The Xu et al. dataset contains only ~5,000 images — tiny by modern standards. Yet we achieve strong results by leveraging **EfficientNetV2-L** (118M parameters pretrained on ImageNet).
 
-**Key insight from ablations with InceptionNetv3, ResNet50, EfficientNetV2-S,M,L:** Better foundation models learn richer visual representations that transfer more effectively to specialized domains. Careful fine-tuning can somewhat compensate for limited domain-specific data.
+**Key insight from ablations with InceptionNetv3, ResNet50, EfficientNetV2-S,M,L:** Better foundation models learn richer visual representations that transfer more effectively to specialized domains. Careful fine-tuning can somewhat compensate for limited domain-specific data. EfficientNetV2-L outperformed other models in early ablations.
 
 ### 3. Learning Rate Schedule is Critical
 
-Our systematic sweep revealed that these learning rates work best for this task:
+Our systematic series of sweeps revealed that these learning rates work best for this task:
 
 | Config | Frozen LR | Unfrozen LR | Accuracy |
 |--------|-----------|-------------|----------|
 | Best | 2e-3 | 5e-5 → 5e-4 | **75.6%** |
-| Conservative | 1e-3 | 1e-5 → 1e-4 | 73.5% |
 
 Higher learning rates during the frozen phase enable rapid head convergence while aggressive unfrozen LRs allow meaningful backbone adaptation within limited epochs.
 
@@ -199,12 +198,13 @@ The path forward likely combines:
 ```bash
 pip install torch torchvision pillow numpy scikit-learn
 ```
+### Download Model Weights
+Download model weights from Google Drive from here: https://drive.google.com/file/d/1NjrZvzov0b62zJIJERxhoDSCkBDP5mpk/view?usp=sharing
 
 ### Inference
 
 ```bash
-# Download model weights from Google Drive
-
+# Download model weights from Google Drive first
 python inference.py \
     --input_folder ./my_images \
     --output predictions.csv \
