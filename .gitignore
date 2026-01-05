@@ -1,0 +1,21 @@
+# Model weights (use GitHub Releases for large files)
+best_model.pth
+
+# Dataset
+g-images-dataset/
+data/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.env
+venv/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db

@@ -1,0 +1,1503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Architectural Style Prediction with Deep Learning</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: #1a1a24;
+            --bg-card-hover: #222230;
+            --text-primary: #f5f5f7;
+            --text-secondary: #a0a0b0;
+            --text-muted: #6b6b7b;
+            --accent-green: #22c55e;
+            --accent-green-dim: rgba(34, 197, 94, 0.15);
+            --accent-blue: #3b82f6;
+            --accent-blue-dim: rgba(59, 130, 246, 0.15);
+            --accent-amber: #f59e0b;
+            --accent-purple: #a855f7;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --border-highlight: rgba(255, 255, 255, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Sora', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+            font-size: 16px;
+        }
+
+        /* Gradient background */
+        .bg-gradient {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 100vh;
+            background: 
+                radial-gradient(ellipse 80% 50% at 50% -20%, rgba(59, 130, 246, 0.15), transparent),
+                radial-gradient(ellipse 60% 40% at 80% 60%, rgba(168, 85, 247, 0.08), transparent),
+                radial-gradient(ellipse 50% 30% at 20% 80%, rgba(34, 197, 94, 0.06), transparent);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 4rem 2rem;
+            position: relative;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 1px;
+            height: 120px;
+            background: linear-gradient(to bottom, transparent, var(--border-highlight));
+        }
+
+        .hero h1 {
+            font-family: 'Crimson Pro', Georgia, serif;
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 300;
+            line-height: 1.15;
+            max-width: 900px;
+            margin-bottom: 1.5rem;
+            animation: fadeInUp 0.8s ease 0.1s both;
+        }
+
+        .hero h1 em {
+            font-style: italic;
+            color: var(--accent-blue);
+        }
+
+        .hero-subtitle {
+            font-size: 1.15rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin-bottom: 3rem;
+            font-weight: 300;
+            animation: fadeInUp 0.8s ease 0.2s both;
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 3rem;
+            animation: fadeInUp 0.8s ease 0.3s both;
+        }
+
+        .hero-stat {
+            text-align: center;
+        }
+
+        .hero-stat-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 2.5rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            line-height: 1;
+        }
+
+        .hero-stat-value.green { color: var(--accent-green); }
+        .hero-stat-value.blue { color: var(--accent-blue); }
+        .hero-stat-value.amber { color: var(--accent-amber); }
+
+        .hero-stat-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-top: 0.5rem;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .container-wide {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Sections */
+        section {
+            padding: 6rem 0;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-header h2 {
+            font-family: 'Crimson Pro', Georgia, serif;
+            font-size: 2.5rem;
+            font-weight: 400;
+            margin-bottom: 1rem;
+        }
+
+        .section-header p {
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Prose */
+        .prose {
+            max-width: 680px;
+            margin: 0 auto;
+        }
+
+        .prose h3 {
+            font-size: 1.5rem;
+            font-weight: 500;
+            margin: 3rem 0 1rem;
+        }
+
+        .prose p {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        .prose strong {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        /* Key Findings */
+        .findings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 3rem;
+        }
+
+        .finding-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .finding-card:hover {
+            background: var(--bg-card-hover);
+            border-color: var(--border-highlight);
+            transform: translateY(-2px);
+        }
+
+        .finding-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .finding-icon.green { background: var(--accent-green-dim); }
+        .finding-icon.blue { background: var(--accent-blue-dim); }
+        .finding-icon.amber { background: rgba(245, 158, 11, 0.15); }
+
+        .finding-card h3 {
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin-bottom: 0.75rem;
+        }
+
+        .finding-card p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        /* Figure Sections */
+        .figure-section {
+            padding: 5rem 0;
+        }
+
+        .figure-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 3rem;
+            margin-top: 3rem;
+        }
+
+        @media (max-width: 600px) {
+            .figure-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .figure-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .figure-container:hover {
+            border-color: var(--border-highlight);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .figure-container img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .figure-caption {
+            padding: 1.25rem 1.5rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .figure-caption h4 {
+            font-size: 1rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .figure-caption p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        .figure-full {
+            max-width: 1100px;
+            margin: 3rem auto;
+        }
+
+        .figure-wide {
+            margin: 3rem auto;
+        }
+
+        /* Metrics Definitions */
+        .metrics-definitions {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-top: 2rem;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .metrics-definitions h4 {
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+        }
+
+        .metrics-definitions dl {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 1rem 2rem;
+        }
+
+        @media (max-width: 600px) {
+            .metrics-definitions dl {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+            }
+            .metrics-definitions dd {
+                margin-bottom: 1rem;
+            }
+        }
+
+        .metrics-definitions dt {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--accent-green);
+            font-weight: 500;
+        }
+
+        .metrics-definitions dd {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        /* Applications Grid */
+        .applications-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .application-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .application-card h4 {
+            font-size: 0.95rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .application-card p {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            margin: 0;
+        }
+
+        /* Styled Tables */
+        .styled-table-container {
+            overflow-x: auto;
+            margin: 2rem 0;
+        }
+
+        .styled-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        .styled-table th,
+        .styled-table td {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .styled-table th {
+            background: var(--bg-card);
+            font-weight: 500;
+            color: var(--text-primary);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .styled-table td {
+            color: var(--text-secondary);
+        }
+
+        .styled-table tr:hover td {
+            background: var(--bg-card);
+        }
+
+        .styled-table .style-name {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .styled-table .highlight-good {
+            color: var(--accent-green);
+        }
+
+        .styled-table .highlight-warn {
+            color: var(--accent-amber);
+        }
+
+        .styled-table .note {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .callout-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-left: 3px solid var(--accent-amber);
+            border-radius: 8px;
+            padding: 1.25rem 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .callout-box p {
+            margin: 0;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .callout-box strong {
+            color: var(--accent-amber);
+        }
+
+        /* Dataset Gallery */
+        .gallery-intro {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .gallery-intro h2 {
+            font-family: 'Crimson Pro', Georgia, serif;
+            font-size: 2.5rem;
+            font-weight: 400;
+            margin-bottom: 1rem;
+        }
+
+        .gallery-intro p {
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto 2rem;
+        }
+
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .legend-dot.match { background: var(--accent-green); }
+        .legend-dot.miss { background: var(--accent-blue); }
+
+        /* Building Cards */
+        .buildings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(480px, 1fr));
+            gap: 2rem;
+        }
+
+        @media (max-width: 540px) {
+            .buildings-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .building-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .building-card:hover {
+            border-color: var(--border-highlight);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .building-card.all-correct {
+            border-color: rgba(34, 197, 94, 0.3);
+        }
+
+        .building-images {
+            display: flex;
+            gap: 2px;
+            background: var(--bg-primary);
+            align-items: center;
+            justify-content: center;
+            min-height: 200px;
+        }
+
+        .building-images img {
+            flex: 1;
+            max-width: 50%;
+            height: auto;
+            max-height: 220px;
+            object-fit: contain;
+            background: var(--bg-secondary);
+            transition: transform 0.3s ease;
+        }
+
+        .building-card:hover .building-images img {
+            transform: scale(1.02);
+        }
+
+        .building-content {
+            padding: 1.5rem;
+        }
+
+        .building-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .building-name {
+            font-size: 1.15rem;
+            font-weight: 500;
+            line-height: 1.3;
+        }
+
+        .building-badge {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 100px;
+            white-space: nowrap;
+        }
+
+        .building-badge.success {
+            background: var(--accent-green-dim);
+            color: var(--accent-green);
+        }
+
+        .building-badge.partial {
+            background: var(--accent-blue-dim);
+            color: var(--accent-blue);
+        }
+
+        .building-badge.miss {
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+        }
+
+        .labels-section {
+            margin-bottom: 1rem;
+        }
+
+        .labels-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .labels-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .label-tag {
+            font-size: 0.85rem;
+            padding: 0.35rem 0.75rem;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+        }
+
+        .predictions-section {
+            border-top: 1px solid var(--border-color);
+            padding-top: 1rem;
+        }
+
+        .prediction-row {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.6rem;
+        }
+
+        .prediction-rank {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            width: 20px;
+        }
+
+        .prediction-bar-container {
+            flex: 1;
+            height: 28px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 6px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .prediction-bar {
+            height: 100%;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            padding: 0 0.75rem;
+            transition: width 0.6s ease;
+        }
+
+        .prediction-bar.match {
+            background: linear-gradient(90deg, var(--accent-green), rgba(34, 197, 94, 0.6));
+        }
+
+        .prediction-bar.other {
+            background: linear-gradient(90deg, var(--accent-blue), rgba(59, 130, 246, 0.5));
+        }
+
+        .prediction-label {
+            font-size: 0.8rem;
+            font-weight: 500;
+            white-space: nowrap;
+            color: white;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .prediction-score {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            width: 55px;
+            text-align: right;
+        }
+
+        .prediction-score.match {
+            color: var(--accent-green);
+        }
+
+        /* CTA Section */
+        .cta-section {
+            text-align: center;
+            padding: 6rem 2rem;
+            background: linear-gradient(180deg, transparent, var(--bg-secondary));
+        }
+
+        .cta-section h2 {
+            font-family: 'Crimson Pro', Georgia, serif;
+            font-size: 2rem;
+            font-weight: 400;
+            margin-bottom: 1rem;
+        }
+
+        .cta-section p {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .cta-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem 2rem;
+            background: var(--text-primary);
+            color: var(--bg-primary);
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.1);
+        }
+
+        /* Footer */
+        footer {
+            padding: 3rem 2rem;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        footer a {
+            color: var(--text-secondary);
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            color: var(--text-primary);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .building-card {
+            animation: fadeInUp 0.6s ease both;
+        }
+
+        /* Slide number indicator */
+        .slide-indicator {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            padding: 0.25rem 0.5rem;
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            border-radius: 4px;
+            backdrop-filter: blur(4px);
+        }
+
+        .building-images-wrapper {
+            position: relative;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-stats {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .legend {
+                flex-direction: column;
+                align-items: center;
+                gap: 0.75rem;
+            }
+
+            .buildings-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .building-images img {
+                height: 140px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-gradient"></div>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>Can AI Understand <em>Architectural Style</em>?</h1>
+        <p class="hero-subtitle">
+            We trained a deep learning model to classify 25 architectural styles, then tested whether it truly 
+            understands style by evaluating it on buildings that intentionally blend multiple traditions.
+        </p>
+        <div class="hero-stats">
+            <div class="hero-stat">
+                <div class="hero-stat-value green">75.6%</div>
+                <div class="hero-stat-label">Single-Style Benchmark</div>
+            </div>
+            <div class="hero-stat">
+                <div class="hero-stat-value blue">25</div>
+                <div class="hero-stat-label">Hybrid Buildings</div>
+            </div>
+            <div class="hero-stat">
+                <div class="hero-stat-value amber">88%</div>
+                <div class="hero-stat-label">Hybrid Styles Recognized</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Introduction -->
+    <section>
+        <div class="container">
+            <div class="prose">
+                <p>
+                    Architectural style classification presents a uniquely challenging problem for machine learning. 
+                    Unlike objects with clear boundaries, <strong>styles exist on a continuum</strong>. Buildings often 
+                    combine elements from multiple traditions: a Gothic Revival church with Art Deco ornamentation, 
+                    or a Beaux-Arts facade with Colonial proportions. Human experts frequently disagree on labels, and even 
+                    the concept of "style" itself is contested among architectural historians.
+                </p>
+                
+                <h3>Why This Matters</h3>
+                <p>
+                    A reliable style classifier has many potential applications:
+                </p>
+            </div>
+            <div class="applications-grid">
+                <div class="application-card">
+                    <h4>Architecture</h4>
+                    <p>Applying a client's stylistic preferences to select candidate prototype models</p>
+                </div>
+                <div class="application-card">
+                    <h4>Urban Planning</h4>
+                    <p>Understanding the stylistic coherence of neighborhoods and streetscapes</p>
+                </div>
+                <div class="application-card">
+                    <h4>Real Estate</h4>
+                    <p>Quantifying architectural character to study effects on property valuation</p>
+                </div>
+                <div class="application-card">
+                    <h4>Heritage Preservation</h4>
+                    <p>Automated cataloging of buildings eligible for historic designation</p>
+                </div>
+            </div>
+            <div class="prose">
+                <p>
+                    This complexity makes architectural style an ideal testbed for understanding what deep learning models actually 
+                    learn: <strong>Do they memorize surface patterns, or develop meaningful representations of aesthetic principles?</strong>
+                </p>
+                
+                <div class="callout-box">
+                    <p><strong>Human baseline:</strong> Dua et al. (2019) found that a trained architect achieved only 56% accuracy 
+                    on style classification, highlighting that this task approaches the limits of human agreement. Many "errors" 
+                    reflect genuine ambiguity.</p>
+                </div>
+                
+                <p>
+                    We fine-tuned EfficientNetV2-L on the Xu et al. (2014) benchmark dataset of ~5,000 images across 
+                    25 styles, achieving 75.6% accuracy, matching prior state-of-the-art. But the real question isn't 
+                    accuracy on single-label examples.
+                </p>
+                <h3>The Real Test: Hybrid Architecture</h3>
+                <p>
+                    To probe whether the model has learned compositional style features, we curated a novel evaluation 
+                    dataset of <strong>25 culturally significant buildings</strong> that architectural scholars explicitly 
+                    document as fusing 2-3 styles. We then asked: can the model recognize both?
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Key Findings -->
+    <section style="background: var(--bg-secondary);">
+        <div class="container">
+            <div class="section-header">
+                <h2>Key Findings</h2>
+                <p>What we learned from testing on hybrid architectural styles</p>
+            </div>
+            <div class="findings-grid">
+                <div class="finding-card">
+                    <div class="finding-icon green">&#127919;</div>
+                    <h3>Compositional Understanding</h3>
+                    <p>The model correctly identifies both styles in 32% of hybrid buildings, suggesting it has learned 
+                    separable style features, not just holistic templates.</p>
+                </div>
+                <div class="finding-card">
+                    <div class="finding-icon blue">&#128202;</div>
+                    <h3>High Partial Recognition</h3>
+                    <p>88% of buildings have at least one correct style in the top predictions, demonstrating robust 
+                    style detection even in complex cases.</p>
+                </div>
+                <div class="finding-card">
+                    <div class="finding-icon amber">&#128260;</div>
+                    <h3>Human-Like Confusions</h3>
+                    <p>The model's errors mirror human expert disagreements: Georgian vs Colonial, Beaux-Arts vs Baroque, styles 
+                    that share design vocabulary.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Model Training -->
+    <section class="figure-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Model Training</h2>
+                <p>EfficientNetV2-L trained with gradual unfreezing on ~5,000 images across 25 architectural styles</p>
+            </div>
+            <div class="figure-grid">
+                <div class="figure-container">
+                    <img src="results/training_curves.png" alt="Training curves showing loss and accuracy over 12 epochs">
+                    <div class="figure-caption">
+                        <h4>Training Curves</h4>
+                        <p>Loss and accuracy over 12 epochs of gradual unfreezing. Training was done in distinct phases as deeper layers were progressively unfrozen.</p>
+                    </div>
+                </div>
+                <div class="figure-container">
+                    <img src="results/confusion_matrix.png" alt="25x25 confusion matrix showing per-class predictions">
+                    <div class="figure-caption">
+                        <h4>Confusion Matrix</h4>
+                        <p>Per-class prediction patterns across 25 styles. Clusters of confusion appear among related styles like Georgian/Colonial and Beaux-Arts/Baroque.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Single-Style Performance -->
+    <section class="figure-section" style="background: var(--bg-secondary);">
+        <div class="container">
+            <div class="section-header">
+                <h2>Single-Style Performance</h2>
+                <p>Per-class results on the Xu et al. benchmark reveal which styles are distinctive versus confusable</p>
+            </div>
+            <div class="styled-table-container">
+                <table class="styled-table">
+                    <thead>
+                        <tr>
+                            <th>Style</th>
+                            <th>F1 Score</th>
+                            <th>Confused With</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="style-name">Tudor Revival</td>
+                            <td class="highlight-good">90.9%</td>
+                            <td class="note"></td>
+                        </tr>
+                        <tr>
+                            <td class="style-name">Ancient Egyptian</td>
+                            <td class="highlight-good">89.7%</td>
+                            <td class="note"></td>
+                        </tr>
+                        <tr>
+                            <td class="style-name">Novelty</td>
+                            <td class="highlight-good">89.3%</td>
+                            <td class="note"></td>
+                        </tr>
+                        <tr>
+                            <td class="style-name">Deconstructivism</td>
+                            <td class="highlight-good">88.4%</td>
+                            <td class="note"></td>
+                        </tr>
+                        <tr>
+                            <td class="style-name">Achaemenid</td>
+                            <td class="highlight-good">87.7%</td>
+                            <td class="note"></td>
+                        </tr>
+                        <tr>
+                            <td class="style-name">Gothic</td>
+                            <td>85.4%</td>
+                            <td class="note"></td>
+                        </tr>
+                        <tr>
+                            <td class="style-name">Art Deco</td>
+                            <td>79.6%</td>
+                            <td class="note"></td>
+                        </tr>
+                        <tr>
+                            <td class="style-name">Baroque</td>
+                            <td>69.0%</td>
+                            <td class="note highlight-warn">Beaux-Arts</td>
+                        </tr>
+                        <tr>
+                            <td class="style-name">Georgian</td>
+                            <td>60.0%</td>
+                            <td class="note highlight-warn">Colonial</td>
+                        </tr>
+                        <tr>
+                            <td class="style-name">Colonial</td>
+                            <td>57.1%</td>
+                            <td class="note highlight-warn">Georgian</td>
+                        </tr>
+                        <tr>
+                            <td class="style-name">Edwardian</td>
+                            <td class="highlight-warn">52.5%</td>
+                            <td class="note highlight-warn">Georgian, Colonial</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="prose" style="margin-top: 2rem;">
+                <p>
+                    <strong>High-performing styles</strong> share distinctive visual signatures: Deconstructivism and Novelty have 
+                    unmistakable forms, while Ancient Egyptian and Achaemenid benefit from unique iconography.
+                </p>
+                <p>
+                    <strong>Challenging styles</strong> share design vocabulary with related traditions. Georgian and Colonial 
+                    are both Anglo-American classical with symmetry and columns. Beaux-Arts and Baroque share ornate European 
+                    monumentalism. Edwardian buildings are often misclassified as Georgian or Colonial, reflecting genuine 
+                    ambiguity in British-influenced American architecture.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Hybrid Evaluation Results -->
+    <section class="figure-section" style="background: var(--bg-secondary);">
+        <div class="container">
+            <div class="section-header">
+                <h2>Hybrid Evaluation Results</h2>
+                <p>Testing the model on buildings that intentionally blend multiple architectural styles</p>
+            </div>
+            <div class="figure-full figure-container">
+                <img src="hybrid_results/metrics_summary.png" alt="Bar chart showing evaluation metrics">
+                <div class="figure-caption">
+                    <h4>Overall Metrics Summary</h4>
+                    <p>Aggregated performance across all 25 hybrid buildings. 88% have at least one correct style identified; 32% capture all ground truth styles in top-k predictions.</p>
+                </div>
+            </div>
+            <div class="metrics-definitions">
+                <h4>Metric Definitions</h4>
+                <dl>
+                    <dt>All Correct (Top-k)</dt>
+                    <dd>Percentage of buildings where all ground truth styles appear in the model's top-k predictions, where k equals the number of annotated styles for that building.</dd>
+                    
+                    <dt>Any Correct (Top-k)</dt>
+                    <dd>Percentage of buildings where at least one ground truth style appears in the top-k predictions.</dd>
+                    
+                    <dt>% Styles Correct</dt>
+                    <dd>Average fraction of ground truth styles correctly identified per building.</dd>
+                    
+                    <dt>Mean Prob. Correct Styles</dt>
+                    <dd>Average probability mass the model assigns to ground truth styles.</dd>
+                    
+                    <dt>Mean Reciprocal Rank</dt>
+                    <dd>Average of 1/rank for each correct style, measuring how highly the model ranks ground truth styles.</dd>
+                    
+                    <dt>Jaccard Similarity</dt>
+                    <dd>Set overlap between predicted and actual styles: |predicted &#8745; actual| / |predicted &#8746; actual|.</dd>
+                </dl>
+            </div>
+            <div class="figure-full figure-container" style="margin-top: 2rem;">
+                <img src="hybrid_results/building_performance.png" alt="Horizontal bar chart ranking building performance">
+                <div class="figure-caption">
+                    <h4>Per-Building Performance Ranking</h4>
+                    <p>Buildings ranked by percentage of correct styles identified. Note the wide variation in outcomes: from 100% on Cathedral of St. John the Divine to 0% on Azadi Tower.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Dataset Gallery -->
+    <section>
+        <div class="container-wide">
+            <div class="gallery-intro">
+                <h2>Hybrid Architecture Dataset</h2>
+                <p>
+                    25 buildings documented by architectural scholars as intentionally blending multiple styles, with two photos each. 
+                    Each card shows two photographs alongside the model's top predictions and assigned probabilities as the mean score over the two images.
+                    Sorted by prediction quality.
+                </p>
+            </div>
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-dot match"></div>
+                    <span>Correct prediction (matches ground truth)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-dot miss"></div>
+                    <span>Other prediction</span>
+                </div>
+            </div>
+            <div class="buildings-grid" id="buildingsGrid">
+                <!-- Buildings will be inserted here by JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- All Predictions Overview -->
+    <section class="figure-section" style="background: var(--bg-secondary);">
+        <div class="container-wide">
+            <div class="section-header">
+                <h2>Probability Distributions at a Glance</h2>
+                <p>Top-6 predicted styles for each hybrid building, with ground truth styles highlighted in green</p>
+            </div>
+            <div class="figure-wide figure-container">
+                <img src="hybrid_results/all_buildings_predictions.png" alt="Grid showing probability distributions for all 25 hybrid buildings">
+                <div class="figure-caption">
+                    <h4>All Buildings: Prediction Breakdown</h4>
+                    <p>Each subplot shows the model's top-6 style predictions for one building. Green bars indicate ground truth styles. Buildings with a checkmark achieved 100% correct style identification.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section">
+        <h2>Explore the Full Research</h2>
+        <p>Code, model weights, and the complete hybrid dataset are available on GitHub.</p>
+        <a href="https://github.com/your-repo/archstyle" class="cta-button">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+            </svg>
+            View on GitHub
+        </a>
+    </section>
+
+    <script>
+        // Building data with predictions - sorted by performance (best first)
+        const buildings = [
+            {
+                name: "Cathedral of St. John the Divine",
+                slide: 1,
+                images: ["hybrid_buildings/Cathedral of St. John the Divine_1.jpg", "hybrid_buildings/Cathedral of St. John the Divine_2.jpg"],
+                groundTruth: ["Romanesque", "Gothic"],
+                predictions: [
+                    { style: "Gothic", prob: 98.3, match: true },
+                    { style: "Romanesque", prob: 1.4, match: true }
+                ],
+                allCorrect: true,
+                meanProb: 49.9
+            },
+            {
+                name: "Basilica of St. Francis of Assisi",
+                slide: 2,
+                images: ["hybrid_buildings/Basilica of St. Francis of Assisi_1.jpg", "hybrid_buildings/Basilica of St. Francis of Assisi_2.jpg"],
+                groundTruth: ["Romanesque", "Gothic"],
+                predictions: [
+                    { style: "Romanesque", prob: 92.0, match: true },
+                    { style: "Gothic", prob: 6.4, match: true }
+                ],
+                allCorrect: true,
+                meanProb: 49.2
+            },
+            {
+                name: "Tribune Tower",
+                slide: 3,
+                images: ["hybrid_buildings/Tribune Tower_1.jpg", "hybrid_buildings/Tribune Tower_2.jpg"],
+                groundTruth: ["Gothic", "Art Deco"],
+                predictions: [
+                    { style: "Art Deco", prob: 62.9, match: true },
+                    { style: "Gothic", prob: 33.4, match: true }
+                ],
+                allCorrect: true,
+                meanProb: 48.1
+            },
+            {
+                name: "Cathedral of Learning",
+                slide: 4,
+                images: ["hybrid_buildings/Cathedral of Learning_1.jpg", "hybrid_buildings/Cathedral of Learning_2.jpg"],
+                groundTruth: ["Gothic", "Art Deco"],
+                predictions: [
+                    { style: "Art Deco", prob: 49.7, match: true },
+                    { style: "Gothic", prob: 45.9, match: true }
+                ],
+                allCorrect: true,
+                meanProb: 47.8
+            },
+            {
+                name: "Palais Garnier",
+                slide: 5,
+                images: ["hybrid_buildings/Palais Garnier_1.jpg", "hybrid_buildings/Palais Garnier_2.jpg"],
+                groundTruth: ["Beaux-Arts", "Baroque"],
+                predictions: [
+                    { style: "Beaux-Arts", prob: 58.5, match: true },
+                    { style: "Baroque", prob: 33.6, match: true }
+                ],
+                allCorrect: true,
+                meanProb: 46.1
+            },
+            {
+                name: "Sacre-Coeur Basilica",
+                slide: 6,
+                images: ["hybrid_buildings/Sacré-Cœur Basilica_1.jpg", "hybrid_buildings/Sacré-Cœur Basilica_2.jpg"],
+                groundTruth: ["Romanesque", "Byzantine"],
+                predictions: [
+                    { style: "Byzantine", prob: 68.5, match: true },
+                    { style: "Romanesque", prob: 17.2, match: true }
+                ],
+                allCorrect: true,
+                meanProb: 42.8
+            },
+            {
+                name: "Sagrada Familia",
+                slide: 7,
+                images: ["hybrid_buildings/Sagrada Família_1.jpg", "hybrid_buildings/Sagrada Família_2.jpg"],
+                groundTruth: ["Gothic", "Art Nouveau"],
+                predictions: [
+                    { style: "Gothic", prob: 80.9, match: true },
+                    { style: "Art Nouveau", prob: 3.8, match: true }
+                ],
+                allCorrect: true,
+                meanProb: 42.3
+            },
+            {
+                name: "Strawberry Hill House",
+                slide: 8,
+                images: ["hybrid_buildings/Strawberry Hill House_1.jpg", "hybrid_buildings/Strawberry Hill House_2.jpg"],
+                groundTruth: ["Georgian", "Gothic"],
+                predictions: [
+                    { style: "Georgian", prob: 40.9, match: true },
+                    { style: "Gothic", prob: 31.1, match: true }
+                ],
+                allCorrect: true,
+                meanProb: 36.0
+            },
+            {
+                name: "Boston Avenue Methodist Church",
+                slide: 9,
+                images: ["hybrid_buildings/Boston Avenue Methodist Church_1.jpg", "hybrid_buildings/Boston Avenue Methodist Church_2.jpg"],
+                groundTruth: ["Gothic", "Art Deco"],
+                predictions: [
+                    { style: "Art Deco", prob: 99.6, match: true },
+                    { style: "International", prob: 0.1, match: false }
+                ],
+                allCorrect: false,
+                meanProb: 49.8
+            },
+            {
+                name: "General Electric Building",
+                slide: 10,
+                images: ["hybrid_buildings/General Electric Building_1.jpg", "hybrid_buildings/General Electric Building_2.jpg"],
+                groundTruth: ["Gothic", "Art Deco"],
+                predictions: [
+                    { style: "Art Deco", prob: 97.9, match: true },
+                    { style: "Chicago School", prob: 1.1, match: false }
+                ],
+                allCorrect: false,
+                meanProb: 49.0
+            },
+            {
+                name: "Carson Pirie Scott Building",
+                slide: 11,
+                images: ["hybrid_buildings/Carson Pirie Scott Building_1.jpg", "hybrid_buildings/Carson Pirie Scott Building_2.jpg"],
+                groundTruth: ["Chicago School", "Art Nouveau"],
+                predictions: [
+                    { style: "Chicago School", prob: 97.7, match: true },
+                    { style: "Art Deco", prob: 1.0, match: false }
+                ],
+                allCorrect: false,
+                meanProb: 48.9
+            },
+            {
+                name: "Persepolis",
+                slide: 12,
+                images: ["hybrid_buildings/Persepolis_1.jpg", "hybrid_buildings/Persepolis_2.jpg"],
+                groundTruth: ["Achaemenid", "Ancient Egyptian"],
+                predictions: [
+                    { style: "Achaemenid", prob: 97.4, match: true },
+                    { style: "Palladian", prob: 0.6, match: false }
+                ],
+                allCorrect: false,
+                meanProb: 48.8
+            },
+            {
+                name: "Palau de la Musica Catalana",
+                slide: 13,
+                images: ["hybrid_buildings/Palau de la Música Catalana_1.jpg", "hybrid_buildings/Palau de la Música Catalana_2.jpg"],
+                groundTruth: ["Art Nouveau", "Gothic"],
+                predictions: [
+                    { style: "Art Nouveau", prob: 82.9, match: true },
+                    { style: "Queen Anne", prob: 6.6, match: false }
+                ],
+                allCorrect: false,
+                meanProb: 41.7
+            },
+            {
+                name: "Chhatrapati Shivaji Terminus",
+                slide: 14,
+                images: ["hybrid_buildings/Chhatrapati Shivaji Terminus_1.jpg", "hybrid_buildings/Chhatrapati Shivaji Terminus_2.jpg"],
+                groundTruth: ["Gothic", "Colonial"],
+                predictions: [
+                    { style: "Gothic", prob: 64.6, match: true },
+                    { style: "Baroque", prob: 12.5, match: false }
+                ],
+                allCorrect: false,
+                meanProb: 34.1
+            },
+            {
+                name: "St. Mark's Basilica",
+                slide: 15,
+                images: ["hybrid_buildings/St. Mark's Basilica_1.jpg", "hybrid_buildings/St. Mark's Basilica_2.jpg"],
+                groundTruth: ["Byzantine", "Gothic", "Romanesque"],
+                predictions: [
+                    { style: "Byzantine", prob: 46.7, match: true },
+                    { style: "Gothic", prob: 45.9, match: true },
+                    { style: "Baroque", prob: 2.8, match: false }
+                ],
+                allCorrect: false,
+                meanProb: 31.4
+            },
+            {
+                name: "550 Madison Ave",
+                slide: 16,
+                images: ["hybrid_buildings/550 Madison Ave_1.jpg", "hybrid_buildings/550 Madison Ave_2.jpg"],
+                groundTruth: ["Postmodern", "Beaux-Arts"],
+                predictions: [
+                    { style: "Beaux-Arts", prob: 35.8, match: true },
+                    { style: "Chicago School", prob: 28.1, match: false }
+                ],
+                allCorrect: false,
+                meanProb: 29.8
+            },
+            {
+                name: "Neuschwanstein Castle",
+                slide: 17,
+                images: ["hybrid_buildings/Neuschwanstein Castle_1.jpg", "hybrid_buildings/Neuschwanstein Castle_2.jpg"],
+                groundTruth: ["Romanesque", "Gothic"],
+                predictions: [
+                    { style: "Romanesque", prob: 51.9, match: true },
+                    { style: "Deconstructivism", prob: 17.8, match: false }
+                ],
+                allCorrect: false,
+                meanProb: 26.3
+            },
+            {
+                name: "Cathedral Basilica of St. Louis",
+                slide: 18,
+                images: ["hybrid_buildings/Cathedral Basilica of St. Louis_1.jpg", "hybrid_buildings/Cathedral Basilica of St. Louis_2.jpg"],
+                groundTruth: ["Romanesque", "Byzantine"],
+                predictions: [
+                    { style: "Romanesque", prob: 49.6, match: true },
+                    { style: "Gothic", prob: 48.6, match: false }
+                ],
+                allCorrect: false,
+                meanProb: 25.5
+            },
+            {
+                name: "St. Paul's Cathedral",
+                slide: 19,
+                images: ["hybrid_buildings/St. Paul's Cathedral_1.jpg", "hybrid_buildings/St. Paul's Cathedral_2.jpg"],
+                groundTruth: ["Baroque", "Palladian"],
+                predictions: [
+                    { style: "Beaux-Arts", prob: 46.1, match: false },
+                    { style: "Baroque", prob: 40.0, match: true }
+                ],
+                allCorrect: false,
+                meanProb: 20.5
+            },
+            {
+                name: "Flatiron Building",
+                slide: 20,
+                images: ["hybrid_buildings/Flatiron Building_1.jpg", "hybrid_buildings/Flatiron Building_2.jpg"],
+                groundTruth: ["Beaux-Arts", "Chicago School"],
+                predictions: [
+                    { style: "Chicago School", prob: 38.8, match: true },
+                    { style: "Art Deco", prob: 29.9, match: false }
+                ],
+                allCorrect: false,
+                meanProb: 20.4
+            },
+            {
+                name: "Versailles",
+                slide: 21,
+                images: ["hybrid_buildings/Versailles_1.jpg", "hybrid_buildings/Versailles_2.jpg"],
+                groundTruth: ["Baroque", "Palladian"],
+                predictions: [
+                    { style: "Baroque", prob: 26.9, match: true },
+                    { style: "Beaux-Arts", prob: 25.3, match: false }
+                ],
+                allCorrect: false,
+                meanProb: 14.8
+            },
+            {
+                name: "Pena Palace",
+                slide: 22,
+                images: ["hybrid_buildings/Pena Palace_1.jpg", "hybrid_buildings/Pena Palace_2.jpg"],
+                groundTruth: ["Gothic", "Baroque"],
+                predictions: [
+                    { style: "Romanesque", prob: 27.3, match: false },
+                    { style: "Colonial", prob: 17.4, match: false }
+                ],
+                allCorrect: false,
+                meanProb: 8.4
+            },
+            {
+                name: "Azadi Tower",
+                slide: 23,
+                images: ["hybrid_buildings/Azadi Tower_1.jpg", "hybrid_buildings/Azadi Tower_2.jpg"],
+                groundTruth: ["Achaemenid", "International"],
+                predictions: [
+                    { style: "Postmodern", prob: 77.7, match: false },
+                    { style: "Art Deco", prob: 17.7, match: false }
+                ],
+                allCorrect: false,
+                meanProb: 0.7
+            },
+            {
+                name: "Los Angeles Union Station",
+                slide: 24,
+                images: ["hybrid_buildings/Los Angeles Union Station_1.jpg", "hybrid_buildings/Los Angeles Union Station_2.jpg"],
+                groundTruth: ["Colonial", "Art Deco"],
+                predictions: [
+                    { style: "International", prob: 55.0, match: false },
+                    { style: "Postmodern", prob: 10.3, match: false }
+                ],
+                allCorrect: false,
+                meanProb: 6.1
+            },
+            {
+                name: "Los Angeles Central Library",
+                slide: 25,
+                images: ["hybrid_buildings/Los Angeles Central Library_1.jpg", "hybrid_buildings/Los Angeles Central Library_2.jpg"],
+                groundTruth: ["Ancient Egyptian", "Art Deco"],
+                predictions: [
+                    { style: "Art Deco", prob: 55.5, match: true },
+                    { style: "Postmodern", prob: 39.4, match: false }
+                ],
+                allCorrect: false,
+                meanProb: 27.8
+            }
+        ];
+
+        // Sort by meanProb descending (best first), then by allCorrect
+        buildings.sort((a, b) => {
+            if (a.allCorrect !== b.allCorrect) return b.allCorrect - a.allCorrect;
+            return b.meanProb - a.meanProb;
+        });
+
+        // Generate HTML for buildings
+        const grid = document.getElementById('buildingsGrid');
+        
+        buildings.forEach((building, index) => {
+            const card = document.createElement('div');
+            card.className = `building-card ${building.allCorrect ? 'all-correct' : ''}`;
+            card.style.animationDelay = `${index * 0.05}s`;
+            
+            const badgeClass = building.allCorrect ? 'success' : 
+                (building.predictions.some(p => p.match) ? 'partial' : 'miss');
+            const badgeText = building.allCorrect ? 'All Correct' : 
+                (building.predictions.some(p => p.match) ? 'Partial Match' : 'Miss');
+            
+            card.innerHTML = `
+                <div class="building-images-wrapper">
+                    <div class="slide-indicator">${index + 1} / 25</div>
+                    <div class="building-images">
+                        <img src="${building.images[0]}" alt="${building.name} - View 1" loading="lazy">
+                        <img src="${building.images[1]}" alt="${building.name} - View 2" loading="lazy">
+                    </div>
+                </div>
+                <div class="building-content">
+                    <div class="building-header">
+                        <div class="building-name">${building.name}</div>
+                        <div class="building-badge ${badgeClass}">${badgeText}</div>
+                    </div>
+                    <div class="labels-section">
+                        <div class="labels-title">Ground Truth Styles</div>
+                        <div class="labels-list">
+                            ${building.groundTruth.map(style => `<span class="label-tag">${style}</span>`).join('')}
+                        </div>
+                    </div>
+                    <div class="predictions-section">
+                        <div class="labels-title">Model Predictions</div>
+                        ${building.predictions.map((pred, i) => `
+                            <div class="prediction-row">
+                                <span class="prediction-rank">${i + 1}.</span>
+                                <div class="prediction-bar-container">
+                                    <div class="prediction-bar ${pred.match ? 'match' : 'other'}" style="width: ${Math.max(pred.prob, 8)}%">
+                                        <span class="prediction-label">${pred.style}</span>
+                                    </div>
+                                </div>
+                                <span class="prediction-score ${pred.match ? 'match' : ''}">${pred.prob.toFixed(1)}%</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            
+            grid.appendChild(card);
+        });
+    </script>
+</body>
+</html>

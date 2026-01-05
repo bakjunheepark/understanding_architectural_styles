@@ -1,0 +1,16 @@
+{
+  "total_buildings": 25,
+  "all_correct_rate": 32.0,
+  "any_correct_rate": 88.0,
+  "pct_correct_avg": 60.66666666666667,
+  "mean_prob_avg": 33.84761951118708,
+  "mrr_avg": 58.72784992784993,
+  "jaccard_avg": 51.33333333333333,
+  "best_examples": [
+    "Cathedral of St. John the Divine",
+    "Basilica of St. Francis of Assisi",
+    "Tribune Tower",
+    "Cathedral of Learning",
+    "Palais Garnier"
+  ]
+}

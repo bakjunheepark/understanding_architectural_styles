@@ -1,0 +1,37 @@
+Config: frozen2e3_unfrozen5e5to5e4_12ep
+LR Frozen: 0.002
+LR Unfrozen: 5e-05 -> 0.0005
+Epochs: 12
+Best Accuracy: 75.63%
+
+                                  precision    recall  f1-score   support
+
+         Achaemenid architecture      0.891     0.864     0.877        66
+American Foursquare architecture      0.831     0.885     0.857        61
+        American craftsman style      0.727     0.706     0.716        34
+   Ancient Egyptian architecture      0.963     0.839     0.897        31
+           Art Deco architecture      0.750     0.848     0.796        46
+        Art Nouveau architecture      0.833     0.806     0.820        31
+            Baroque architecture      0.630     0.763     0.690        38
+            Bauhaus architecture      0.733     0.786     0.759        56
+         Beaux-Arts architecture      0.525     0.677     0.592        31
+          Byzantine architecture      0.780     0.821     0.800        39
+     Chicago school architecture      0.742     0.852     0.793        27
+           Colonial architecture      0.515     0.642     0.571        53
+                Deconstructivism      1.000     0.792     0.884        24
+          Edwardian architecture      0.800     0.390     0.525        41
+           Georgian architecture      0.730     0.509     0.600        53
+             Gothic architecture      0.826     0.884     0.854        43
+      Greek Revival architecture      0.653     0.780     0.711        41
+             International style      0.733     0.688     0.710        48
+            Novelty architecture      1.000     0.806     0.893        31
+          Palladian architecture      0.714     0.714     0.714        49
+         Postmodern architecture      0.676     0.781     0.725        32
+         Queen Anne architecture      0.691     0.717     0.704        53
+         Romanesque architecture      0.833     0.833     0.833        42
+    Russian Revival architecture      0.852     0.575     0.687        40
+      Tudor Revival architecture      0.877     0.943     0.909        53
+
+                        accuracy                          0.756      1063
+                       macro avg      0.772     0.756     0.757      1063
+                    weighted avg      0.768     0.756     0.755      1063
